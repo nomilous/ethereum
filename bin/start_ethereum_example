@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+exec geth \
+  --identity "home" \
+  --genesis "/Users/username/ethereum/genesis.json" \
+  --etherbase 6b41859d5da286265bfe09c33e771434223d9de2 \
+  --minerthreads 1 \
+  --mine \
+  --rpc --rpcport 8545 \
+  --rpcaddr 127.0.0.1 \
+  --rpccorsdomain "*" \
+  --datadir "/Users/username/ethereum/datadir" \
+  --port 30303 \
+  --nodiscover \
+  --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" \
+  --rpcapi "web3,db,net,eth" \
+  --networkid 43210 \
+  --autodag \
+  --nat "any"
+
+
+# exec geth \
+#   --identity "home" \
+#   --genesis "/Users/username/ethereum/genesis.json" \
+#   --etherbase 6b41859d5da286265bfe09c33e771434223d9de2 \
+#   --password "/Users/username/ethereum/passwords" \
+#   --unlock "6b41859d5da286265bfe09c33e771434223d9de2 4bac45928823a4aecb164f513ecf480280634212 34115df7130b5019fb6df8cac5d067c00ebfe6a6 4ae908f362b12d7928c98fda61ba525eedb0edc3" \
+#   --minerthreads 1 \
+#   --mine \
+#   --rpc --rpcport 8545 \
+#   --rpcaddr 127.0.0.1 \
+#   --rpccorsdomain "*" \
+#   --datadir "/Users/username/ethereum/datadir" \
+#   --port 30303 \
+#   --nodiscover \
+#   --ipcapi "admin,db,eth,debug,miner,net,shh,txpool,personal,web3" \
+#   --rpcapi "web3,db,net,eth" \
+#   --networkid 43210 \
+#   --autodag \
+#   --nat "any"
