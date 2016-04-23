@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+
+var cmd = require('commander');
+var Web3 = require('web3');
+var fs = require('fs');
+var path = require('path');
+var contractFile, abiFile, addressFile, abi, address;
+
+cmd.usage('[options] <contractFile>')
+.parse(process.argv);
+
+contractFile = cmd.args[0];
+
+if (!contractFile) {
+  cmd.help();
+  process.exit(1);
+}
+
+try {
+  abiFile = contractFile + '.deployed' + path.sep + 'latest' + path.sep + 'abi.json';
+  addressFile = contractFile + '.deployed' + path.sep + 'latest' + path.sep + 'address';
+  abiArray = JSON.parse(fs.readFileSync(abiFile).toString());
+  address = fs.readFileSync(addressFile).toString()
+} catch (err) {
+  console.error('contract not deployed');
+  process.exit(1);
+}
+
+// web3 = new Web3(new Web3.providers.HttpProvider("http://" + cmd.rpcaddr + ":" + cmd.rpcport));
+var ipcFile = path.dirname(path.dirname(__filename)) + '/datadir/geth.ipc';
+web3 = new Web3(new Web3.providers.IpcProvider(ipcFile, require('net')))
+
+
+
+var Contract = web3.eth.contract(abiArray);
+var contract = Contract.at(address);
+
+contract.greet.call(function(err, result) {
+  console.log('ERROR', err);
+  console.log('RESULT', result);
+});

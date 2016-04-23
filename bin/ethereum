@@ -1,0 +1,130 @@
+#!/usr/bin/env node
+
+var DEFAULT_GAS = 100000;
+
+var keys = require('../keys');
+var cmd = require('commander')
+var DeployContract = require('../lib/deploy-contract');
+var AttachToContract = require('../lib/attach-to-contract');
+var TransferValue = require('../lib/transfer-value');
+var Web3 = require('web3');
+var path = require('path');
+var net = require('net');
+var ipcPath, provider;
+
+cmd
+  .option('', null, null, null)
+  .option('-i, --ipc <path>', 'path to ipc socket', null, null)
+  .option('-d, --deploy <contractFile>', 'deploy a contract', null, null)
+  .option('-a, --attach <contractFile>', 'attach to deployed contract', null, null)
+  .option('-t, --transfer <value>', 'transfer ether from sender to <to>', null, null)
+  .option('', null, null, null)
+  .option('The <sender> and <to> can be account', null, null, null)
+  .option('or sequence number from keys.json.', null, null, null)
+  .option('Sender will default to first account.', null, null, null)
+  .option('', null, null, null)
+  .option('-s, --sender <address>', 'sender\'s address from keys.json', null, null)
+  .option('-t, --to     <address>', 'receiver\'s address from keys.json', null, null)
+  .option('', null, null, null)
+  .option('Deploy may need more than the', null, null, null)
+  .option('default (' + DEFAULT_GAS  + ') amount of gas', null, null, null)
+  .option('', null, null, null)
+  .option('-g, --gas <value>', null, null, null)
+  .option('', null, null, null)
+  .option('If contract constructor requires', null, null, null)
+  .option('parameters use (repeat) --param', null, null, null)
+  .option('', null, null, null)
+  .option('-p, --param <value>', 'repeating contract constructor param', collect, [])
+  .option('', null, null, null)
+  .option('', null, null, null)
+  ;
+
+cmd.parse(process.argv);
+
+ipcPath = cmd.ipc || path.normalize(__dirname + '/../datadir/geth.ipc');
+provider = new Web3.providers.IpcProvider(ipcPath, net);
+global.web3 = new Web3(provider);
+
+if (cmd.deploy) {
+  deploy(cmd)
+    .then(function(){
+      process.exit(0);
+    })
+    .catch(function(error) {
+      console.error(error);
+      process.exit(1);
+    });
+} else if (cmd.attach) {
+  attach(cmd)
+    .then(function(){
+      process.exit(0);
+    })
+    .catch(function(error) {
+      console.error(error);
+      process.exit(1);
+    });
+} else if (cmd.transfer) {
+  transfer(cmd)
+    .then(function(){
+      process.exit(0);
+    })
+    .catch(function(error) {
+      console.error(error);
+      process.exit(1);
+    });
+} else {
+  console.error('\n\n  Error: requires either deploy, attach or transfer');
+  cmd.help();
+  process.exit(1);
+}
+
+function collect(val, memo) {
+  if (!isNaN(parseFloat(val))) {
+    val = parseFloat(val);
+  }
+  memo.push(val);
+  return memo;
+}
+
+function getSenderKeyPair(input) {
+  var sender, seq = parseFloat(input);
+  if (!input) return keys[0];
+  if (!isNaN(seq) && seq.toString().length == input.length) {
+    sender = keys[parseInt(input)];
+    if (!sender) throw new Error('sender out of range');
+    return sender;
+  };
+  sender = keys.filter(function(keyPair) {
+    return keyPair.account == input;
+  })[0];
+  if (!sender) throw new Error('no such sender');
+  return sender;
+}
+
+function deploy(cmd) {
+  var sender = getSenderKeyPair(cmd.sender);
+  var contractFile = cmd.deploy;
+  var gas = cmd.gas || DEFAULT_GAS;
+  var params = cmd.param;
+  return DeployContract({
+    sender: sender,
+    gasLimit: gas,
+    file: contractFile,
+    params: params
+  })
+}
+
+function attach(cmd) {
+  var sender = getSenderKeyPair(cmd.sender);
+  return AttachToContract({
+    sender: sender
+  });
+}
+
+function transfer(cmd) {
+  var sender = getSenderKeyPair(cmd.sender);
+  return TransferValue({
+    sender: sender
+  })
+}
+

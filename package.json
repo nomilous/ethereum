@@ -1,0 +1,19 @@
+{
+  "name": "ethereum",
+  "private": "true",
+  "version": "1.0.0",
+  "description": "scratch private net",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.3.5",
+    "commander": "^2.9.0",
+    "mkdirp": "^0.5.1",
+    "web3": "^0.15.3",
+    "ethereum-deploy-raw-contract": "git@github.com:nomilous/ethereum-deploy-raw-contract.git"
+  }
+}
