@@ -34,7 +34,8 @@ node_modules
 
 .idea
 
-datadir
+datadir/*
+!datadir/.point.geth.at.this.dir
 passwords
 *.contract
 bin/start_ethereum
