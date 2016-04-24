@@ -12,7 +12,7 @@ var AddKey = require('../lib/add-key');
 var Web3 = require('web3');
 var path = require('path');
 var net = require('net');
-var ipcPath, provider;
+var provider;
 
 cmd
   .option('')
@@ -46,7 +46,7 @@ cmd
 
 cmd.parse(process.argv);
 
-ipcPath = cmd.ipc || path.normalize(__dirname + '/../datadir/geth.ipc');
+global.ipcPath = cmd.ipc || path.normalize(__dirname + '/../datadir/geth.ipc');
 provider = new Web3.providers.IpcProvider(ipcPath, net);
 global.web3 = new Web3(provider);
 
