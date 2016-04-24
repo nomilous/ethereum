@@ -1,6 +1,6 @@
 # ethereum
 
-I'm exploring interfacing with ethereum by implementing something as close to the bone as possible.
+Exploring interfacing with ethereum by implementing something as close to the bone as possible.
 
 See `bin/ethereum` command line utility. Performs common interfacing tasks.
 
