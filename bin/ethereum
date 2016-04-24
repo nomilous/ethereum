@@ -28,7 +28,7 @@ cmd
   .option('Sender will default to first account.')
   .option('')
   .option('-s, --sender <account>', 'sender\'s address from keys.json')
-  .option('-t, --to     <account>', 'receiver\'s address from keys.json')
+  .option('-2, --to     <account>', 'receiver\'s address from keys.json')
   .option('-w, --wei', 'use wei as unit for transfer or balance')
   .option('')
   .option('Deploy may need more than the')
@@ -146,8 +146,25 @@ function attach(cmd) {
 
 function transfer(cmd) {
   var sender = getSenderKeyPair(cmd.sender);
+  if (!cmd.to) {
+    console.log('\n  Error: missing --to');
+    cmd.help();
+    process.exit(1);
+  }
+  var to =  getSenderKeyPair(cmd.to);
+  var value = parseInt(cmd.transfer);
+  if (isNaN(value)) {
+    console.log('\n  Error: "%s" is not a number', cmd.transfer);
+    cmd.help();
+    process.exit(1);
+  }
+  var gas = cmd.gas || DEFAULT_GAS;
   return TransferValue({
-    sender: sender
+    sender: sender,
+    value: value,
+    unit: cmd.wei ? 'wei' : 'ether',
+    to: to,
+    gas: gas
   })
 }
 
