@@ -13,8 +13,9 @@
     "bitcore-lib": "^0.13.15",
     "bluebird": "^3.3.5",
     "commander": "^2.9.0",
-    "ethereum-deploy-raw-contract": "com:nomilous/ethereum-deploy-raw-contract",
+    "ethereumjs-tx": "^1.1.1",
     "ethereumjs-util": "^4.3.0",
+    "solidity": "github:ethereum/solidity.js",
     "mkdirp": "^0.5.1",
     "web3": "^0.15.3"
   }
