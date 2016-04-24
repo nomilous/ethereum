@@ -8,6 +8,7 @@ var DeployContract = require('../lib/deploy-contract');
 var AttachToContract = require('../lib/attach-to-contract');
 var TransferValue = require('../lib/transfer-value');
 var GetBalance = require('../lib/get-balance');
+var AddKey = require('../lib/add-key');
 var Web3 = require('web3');
 var path = require('path');
 var net = require('net');
@@ -16,6 +17,7 @@ var ipcPath, provider;
 cmd
   .option('')
   .option('-i, --ipc <path>', 'path to ipc socket')
+  .option('-k, --addkey', 'add keypair account to keys.json')
   .option('-d, --deploy <contractFile>', 'deploy a contract')
   .option('-a, --attach <contractFile>', 'attach to deployed contract')
   .option('-t, --transfer <value>', 'transfer ether from <sender> to <to>')
@@ -84,8 +86,17 @@ if (cmd.deploy) {
       console.error(error);
       process.exit(1);
     });
+} else if (cmd.addkey) {
+  addkey(cmd)
+    .then(function(){
+      process.exit(0);
+    })
+    .catch(function(error) {
+      console.error(error);
+      process.exit(1);
+    });
 } else {
-  console.error('\n\n  Error: requires either deploy, attach, transfer or balance');
+  console.error('\n\n  Error: requires either addkey, deploy, attach, transfer or balance');
   cmd.help();
   process.exit(1);
 }
@@ -141,9 +152,17 @@ function transfer(cmd) {
 }
 
 function balance(cmd) {
+  // set to first account if unspecified
   if (typeof cmd.balance === 'boolean') cmd.balance = 0;
   var sender = getSenderKeyPair(cmd.balance);
   return GetBalance({
     sender: sender
   })
+}
+
+function addkey(cmd) {
+  var keyFile = path.normalize(__dirname + '/../keys.json')
+  return AddKey({
+    keyFile: keyFile
+  });
 }

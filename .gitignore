@@ -39,3 +39,4 @@ datadir/*
 passwords
 *.contract
 bin/start_ethereum
+keys.json

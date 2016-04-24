@@ -10,10 +10,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "bitcore-lib": "^0.13.15",
     "bluebird": "^3.3.5",
     "commander": "^2.9.0",
+    "ethereum-deploy-raw-contract": "com:nomilous/ethereum-deploy-raw-contract",
+    "ethereumjs-util": "^4.3.0",
     "mkdirp": "^0.5.1",
-    "web3": "^0.15.3",
-    "ethereum-deploy-raw-contract": "com:nomilous/ethereum-deploy-raw-contract"
+    "web3": "^0.15.3"
   }
 }
