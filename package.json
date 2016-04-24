@@ -14,6 +14,6 @@
     "commander": "^2.9.0",
     "mkdirp": "^0.5.1",
     "web3": "^0.15.3",
-    "ethereum-deploy-raw-contract": "git@github.com:nomilous/ethereum-deploy-raw-contract.git"
+    "ethereum-deploy-raw-contract": "com:nomilous/ethereum-deploy-raw-contract"
   }
 }

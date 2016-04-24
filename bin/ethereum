@@ -3,10 +3,11 @@
 var DEFAULT_GAS = 100000;
 
 var keys = require('../keys');
-var cmd = require('commander')
+var cmd = require('commander');
 var DeployContract = require('../lib/deploy-contract');
 var AttachToContract = require('../lib/attach-to-contract');
 var TransferValue = require('../lib/transfer-value');
+var GetBalance = require('../lib/get-balance');
 var Web3 = require('web3');
 var path = require('path');
 var net = require('net');
@@ -17,17 +18,19 @@ cmd
   .option('-i, --ipc <path>', 'path to ipc socket')
   .option('-d, --deploy <contractFile>', 'deploy a contract')
   .option('-a, --attach <contractFile>', 'attach to deployed contract')
-  .option('-t, --transfer <value>', 'transfer ether from sender to <to>')
+  .option('-t, --transfer <value>', 'transfer ether from <sender> to <to>')
+  .option('-b, --balance [account]', 'get balance in ether (default to first account)')
   .option('')
   .option('The <sender> and <to> can be account')
   .option('or sequence number from keys.json.')
   .option('Sender will default to first account.')
   .option('')
-  .option('-s, --sender <address>', 'sender\'s address from keys.json')
-  .option('-t, --to     <address>', 'receiver\'s address from keys.json')
+  .option('-s, --sender <account>', 'sender\'s address from keys.json')
+  .option('-t, --to     <account>', 'receiver\'s address from keys.json')
+  .option('-w, --wei', 'use wei as unit for transfer or balance')
   .option('')
   .option('Deploy may need more than the')
-  .option('default (' + DEFAULT_GAS  + ') amount of gas')
+  .option('default (' + DEFAULT_GAS  + ') wei of gas')
   .option('')
   .option('-g, --gas <value>')
   .option('')
@@ -72,8 +75,17 @@ if (cmd.deploy) {
       console.error(error);
       process.exit(1);
     });
+} else if (cmd.balance) {
+  balance(cmd)
+    .then(function(){
+      process.exit(0);
+    })
+    .catch(function(error) {
+      console.error(error);
+      process.exit(1);
+    });
 } else {
-  console.error('\n\n  Error: requires either deploy, attach or transfer');
+  console.error('\n\n  Error: requires either deploy, attach, transfer or balance');
   cmd.help();
   process.exit(1);
 }
@@ -128,3 +140,10 @@ function transfer(cmd) {
   })
 }
 
+function balance(cmd) {
+  if (typeof cmd.balance === 'boolean') cmd.balance = 0;
+  var sender = getSenderKeyPair(cmd.balance);
+  return GetBalance({
+    sender: sender
+  })
+}
